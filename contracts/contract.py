@@ -3,6 +3,8 @@ from genlayer import *
 from dataclasses import dataclass
 from urllib.parse import urlsplit
 import hashlib,json
+from datetime import datetime,timezone
+def now():return int(datetime.now(timezone.utc).timestamp())
 def c(v,n=1000):return str(v).strip()[:n]
 def ident(v):
  x=c(v,64).upper()
@@ -51,16 +53,16 @@ class CurriculumThread(gl.Contract):
    if not isinstance(leader,gl.vm.Return):return False
    try:return run()==leader.calldata
    except:return False
-  z=gl.vm.run_nondet_unsafe(run,validate);x.matched=json.dumps(z['matched']);x.missing=json.dumps(z['missing']);x.prerequisites=json.dumps(z['prerequisites']);x.digests=json.dumps(z['digests']);x.mapped_at=gl.message.timestamp;x.state='MAPPED'
+  z=gl.vm.run_nondet_unsafe(run,validate);x.matched=json.dumps(z['matched']);x.missing=json.dumps(z['missing']);x.prerequisites=json.dumps(z['prerequisites']);x.digests=json.dumps(z['digests']);x.mapped_at=now();x.state='MAPPED'
  @gl.public.write
  def object_mapping(self,thread_id:str,evidence_url:str)->None:
   _,x=self._get(thread_id);u,_=link(evidence_url)
-  if x.state!='MAPPED' or gl.message.sender_address!=x.applicant or int(gl.message.timestamp)>int(x.mapped_at)+604800:raise gl.vm.UserError('[EXPECTED] applicant objection inside seven-day window required')
+  if x.state!='MAPPED' or gl.message.sender_address!=x.applicant or now()>int(x.mapped_at)+604800:raise gl.vm.UserError('[EXPECTED] applicant objection inside seven-day window required')
   x.objection_url=u;x.state='OBJECTED'
  @gl.public.write
  def finalize(self,thread_id:str)->None:
   _,x=self._get(thread_id)
-  if x.state!='MAPPED' or int(gl.message.timestamp)<=int(x.mapped_at)+604800:raise gl.vm.UserError('[EXPECTED] unobjectionable mapped thread after window required')
+  if x.state!='MAPPED' or now()<=int(x.mapped_at)+604800:raise gl.vm.UserError('[EXPECTED] unobjectionable mapped thread after window required')
   x.state='FINAL'
  @gl.public.view
  def get_thread(self,thread_id:str)->dict:
