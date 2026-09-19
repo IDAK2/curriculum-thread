@@ -1,0 +1,2 @@
+HOME SYLLABUS — DISTRIBUTED SYSTEMS
+Outcomes: explain consensus under partial failure; design fault-tolerant replicated services; evaluate safety and liveness tradeoffs.

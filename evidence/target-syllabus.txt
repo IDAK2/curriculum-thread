@@ -1,0 +1,2 @@
+TARGET SYLLABUS — RELIABLE COMPUTING
+Outcomes: apply consensus protocols; analyze replicated-service failure modes; distinguish system safety from liveness. Prerequisite: data structures.
